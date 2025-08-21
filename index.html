@@ -1,0 +1,502 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MS Aid Qualifier</title>
+  <meta name="description" content="Instantly see which scholarships a student qualifies for (Mississippi seed)" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .badge { border-radius: 9999px; padding: 0.25rem 0.6rem; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; }
+    .badge-ELIGIBLE { background: #dcfce7; color: #166534; }
+    .badge-CONDITIONAL { background: #fef3c7; color: #92400e; }
+    .badge-INELIGIBLE { background: #fee2e2; color: #991b1b; }
+    .input { border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.5rem 0.75rem; background: white; }
+    .card { border: 1px solid #e5e7eb; border-radius: 0.75rem; background: white; padding: 1rem; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <header class="bg-white border-b">
+    <div class="max-w-6xl mx-auto p-4 flex flex-col md:flex-row gap-2 md:items-center md:justify-between">
+      <h1 class="text-2xl font-semibold">MS Aid Qualifier</h1>
+      <div class="text-gray-600 text-sm">Single-file website • open-source seed</div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <section class="lg:col-span-1 space-y-6">
+      <div class="card">
+        <h2 class="text-xl font-semibold mb-3">Student Profile</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-gray-700">State Catalog</span>
+            <select id="state" class="input">
+              <option value="MS" selected>Mississippi</option>
+            </select>
+          </label>
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-gray-700">Residency State</span>
+            <select id="residency_state" class="input">
+              <option>MS</option><option>AL</option><option>LA</option><option>TN</option><option>AR</option>
+            </select>
+          </label>
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-gray-700">Citizenship</span>
+            <select id="citizenship" class="input">
+              <option value="US_CITIZEN" selected>U.S. Citizen</option>
+              <option value="PERMANENT_RESIDENT">Permanent Resident</option>
+              <option value="OTHER">Other</option>
+            </select>
+          </label>
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-gray-700">Age</span>
+            <input id="age" type="number" min="13" max="100" class="input" value="18" />
+          </label>
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-gray-700">Household Income ($)</span>
+            <input id="income" type="number" min="0" class="input" value="35000" />
+          </label>
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-gray-700">Household Size</span>
+            <input id="hhsize" type="number" min="1" class="input" value="4" />
+          </label>
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-gray-700">GPA (0–4.0)</span>
+            <input id="gpa" type="number" step="0.01" min="0" max="4" class="input" value="3.6" />
+          </label>
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-gray-700">ACT</span>
+            <input id="act" type="number" min="1" max="36" class="input" value="22" />
+          </label>
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-gray-700">SAT</span>
+            <input id="sat" type="number" min="400" max="1600" class="input" />
+          </label>
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-gray-700">Class Standing</span>
+            <select id="class_standing" class="input">
+              <option value="HS_SENIOR" selected>HS Senior</option>
+              <option value="COLLEGE_FRESHMAN">College Freshman</option>
+              <option value="COLLEGE_SOPHOMORE">College Sophomore</option>
+              <option value="COLLEGE_JUNIOR">College Junior</option>
+              <option value="COLLEGE_SENIOR">College Senior</option>
+              <option value="CC_TRANSFER">CC Transfer</option>
+            </select>
+          </label>
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-gray-700">FAFSA Filed?</span>
+            <select id="fafsa" class="input">
+              <option value="yes" selected>Yes</option>
+              <option value="no">No</option>
+            </select>
+          </label>
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-gray-700">Application Date</span>
+            <input id="appdate" type="date" class="input" />
+          </label>
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-gray-700">PTK Member (Transfers)</span>
+            <select id="ptk" class="input">
+              <option value="no" selected>No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </label>
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-gray-700">Key Club Member (HS)</span>
+            <select id="keyclub" class="input">
+              <option value="no" selected>No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </label>
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-gray-700">Fully Online Program?</span>
+            <select id="fully_online" class="input">
+              <option value="no" selected>No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </label>
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-gray-700">Plan to Live On Campus?</span>
+            <select id="live_on_campus" class="input">
+              <option value="no" selected>No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="text-xl font-semibold mb-3">Catalog Filters</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-gray-700">Institution filter</span>
+            <input id="inst_filter" class="input" placeholder="e.g., Mississippi State" />
+          </label>
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-gray-700">Need-based only</span>
+            <select id="need_only" class="input">
+              <option value="no" selected>No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </label>
+          <label class="flex flex-col gap-1 text-sm">
+            <span class="text-gray-700">Automatic-only (no committee)</span>
+            <select id="auto_only" class="input">
+              <option value="no" selected>No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <button id="download_json" class="w-full rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2">Download matches as JSON</button>
+      </div>
+    </section>
+
+    <section class="lg:col-span-2 space-y-6">
+      <div class="card">
+        <div class="flex items-center justify-between text-sm text-gray-600 mb-3">
+          <div>Showing <strong id="count_results">0</strong> programs</div>
+          <div>Catalog size: <strong id="count_catalog">0</strong></div>
+        </div>
+        <div id="results" class="grid grid-cols-1 gap-4"></div>
+      </div>
+
+      <div class="card">
+        <h2 class="text-xl font-semibold mb-3">JSON (for developers)</h2>
+        <pre id="json_dump" class="mono bg-gray-900 text-gray-100 rounded-xl p-4 overflow-auto text-xs"></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer class="text-center text-xs text-gray-500 py-6">© MS Aid Qualifier – demo site</footer>
+
+  <script>
+    // --------- Dataset (MS) ---------
+    const SCHOLARSHIPS_MS = [
+      {
+        id: "ms-olemiss-red-blue",
+        state: "MS",
+        institution: "University of Mississippi (Ole Miss)",
+        name: "Red & Blue Scholarship",
+        need_based: true,
+        automatic: false,
+        amount: { type: "LAST_DOLLAR", notes: "Fills remaining gift-aid gap after Pell/state/institutional/private" },
+        deadlines: { priority_date: "2025-03-15" },
+        eligibility: {
+          residency_state: "MS",
+          ms_resident_only: true,
+          citizenship: ["US_CITIZEN", "PERMANENT_RESIDENT"],
+          gpa_min: 0.0,
+          act_min: null,
+          sat_min: null,
+          class_standing: ["HS_SENIOR","COLLEGE_FRESHMAN","COLLEGE_SOPHOMORE","COLLEGE_JUNIOR","COLLEGE_SENIOR"],
+          enrollment: ["FULL_TIME"],
+          required_flags: ["FAFSA"],
+          notes: "Amount/thresholds depend on FAFSA need + academic credentials"
+        },
+        source_url: "https://finaid.olemiss.edu/tnc/redbluescholarshipe142/"
+      },
+      {
+        id: "ms-olemiss-osher-reentry",
+        state: "MS",
+        institution: "University of Mississippi (Ole Miss)",
+        name: "Osher Reentry Scholarship",
+        need_based: true,
+        automatic: true,
+        amount: { type: "RANGE", value: 1250, max_value: 2500, notes: "Half-time $1,250/yr; full-time $2,500/yr" },
+        deadlines: { priority_date: "2025-06-01", final_date: "2025-07-01" },
+        eligibility: {
+          citizenship: ["US_CITIZEN"],
+          residency_state: "MS",
+          ms_resident_only: false,
+          age_min: 25,
+          age_max: 50,
+          educational_gap_years_min: 5,
+          class_standing: ["COLLEGE_JUNIOR","COLLEGE_SENIOR"],
+          enrollment: ["FULL_TIME","HALF_TIME"],
+          required_flags: ["FAFSA","NOT_FULLY_ONLINE"],
+          notes: "Preference for MS residents; junior/senior preferred"
+        },
+        source_url: "https://finaid.olemiss.edu/osherreentry/"
+      },
+      {
+        id: "ms-olemiss-named-donors",
+        state: "MS",
+        institution: "University of Mississippi (Ole Miss)",
+        name: "Named Scholarships (Frame, Autry, Puckett, McGinnis, etc.)",
+        need_based: true,
+        automatic: false,
+        amount: { type: "RANGE", notes: "Varies by fund/department" },
+        eligibility: {
+          citizenship: ["US_CITIZEN","PERMANENT_RESIDENT"],
+          gpa_min: 3.0,
+          enrollment: ["FULL_TIME"],
+          required_flags: ["FAFSA"],
+          notes: "Many are major-specific and committee selected"
+        },
+        source_url: "https://finaid.olemiss.edu/"
+      },
+      {
+        id: "ms-msu-gsa",
+        state: "MS",
+        institution: "Mississippi State University (MSU)",
+        name: "General Scholarship Application (GSA) – Competitive",
+        need_based: false,
+        automatic: false,
+        amount: { type: "RANGE", notes: "Competitive; amounts vary" },
+        deadlines: { priority_date: "2024-12-01" },
+        eligibility: {
+          required_flags: ["FAFSA"],
+          notes: "Academic/leadership review; not strictly need-only"
+        },
+        source_url: "https://www.admissions.msstate.edu/scholarships/"
+      },
+      {
+        id: "ms-msu-ptk-transfer",
+        state: "MS",
+        institution: "Mississippi State University (MSU)",
+        name: "Phi Theta Kappa (PTK) Scholarship (Transfer)",
+        need_based: false,
+        automatic: true,
+        amount: { type: "RANGE", value: 1000, max_value: 2000, notes: "$1k–$2k per semester by GPA; caps apply" },
+        eligibility: {
+          class_standing: ["CC_TRANSFER"],
+          gpa_min: 3.25,
+          required_flags: ["PTK_MEMBER"]
+        },
+        source_url: "https://www.admissions.msstate.edu/scholarships/details/phi-theta-kappa-scholarship"
+      },
+      {
+        id: "ms-msu-luckyday",
+        state: "MS",
+        institution: "Mississippi State University (MSU)",
+        name: "Luckyday Scholars Program",
+        need_based: true,
+        automatic: false,
+        amount: { type: "FIXED", value: 6000, notes: "$6,000/yr; $24,000 total" },
+        deadlines: { priority_date: "2024-12-01" },
+        eligibility: {
+          residency_state: "MS",
+          ms_resident_only: true,
+          gpa_min: 3.5,
+          act_min: 20,
+          class_standing: ["HS_SENIOR"],
+          required_flags: ["FAFSA"],
+          notes: "Cohort/program selection; leadership & service considered"
+        },
+        source_url: "https://www.admissions.msstate.edu/scholarships/details/luckyday-scholars-program"
+      },
+      {
+        id: "ms-msu-key-club",
+        state: "MS",
+        institution: "Mississippi State University (MSU)",
+        name: "Key Club Scholarship",
+        need_based: false,
+        automatic: true,
+        amount: { type: "RANGE", value: 250, max_value: 1000, notes: "$250 per year of service, up to $1,000 (one-year award)" },
+        deadlines: { priority_date: "2024-12-01" },
+        eligibility: {
+          gpa_min: 3.0,
+          class_standing: ["HS_SENIOR"],
+          required_flags: ["FAFSA","KEY_CLUB"]
+        },
+        source_url: "https://www.admissions.msstate.edu/scholarships/details/key-club-scholarship"
+      }
+    ];
+
+    // --------- Rules Engine ---------
+    function qualify(student, scholarships) {
+      const results = [];
+      for (const s of scholarships) {
+        const e = s.eligibility || {};
+        const reasons = [];
+        const missing = [];
+
+        if (e.ms_resident_only && student.residency_state !== "MS") reasons.push("Residency not MS");
+        if (e.citizenship && !e.citizenship.includes(student.citizenship)) reasons.push("Citizenship requirement");
+        if (typeof e.income_cap === "number" && student.household_income > e.income_cap) reasons.push("Income above cap");
+        if (typeof e.gpa_min === "number" && (student.gpa ?? 0) < e.gpa_min) reasons.push("GPA below minimum");
+
+        if (typeof e.act_min === "number") {
+          const act = student.act ?? 0;
+          if (act < e.act_min) reasons.push("ACT below minimum");
+        }
+        if (typeof e.sat_min === "number") {
+          const sat = student.sat ?? 0;
+          if (sat < e.sat_min) reasons.push("SAT below minimum");
+        }
+
+        if (typeof e.age_min === "number" && (student.age ?? 0) < e.age_min) reasons.push("Age below minimum");
+        if (typeof e.age_max === "number" && (student.age ?? 0) > e.age_max) reasons.push("Age above maximum");
+        if (typeof e.educational_gap_years_min === "number" && (student.educational_gap_years ?? 0) < e.educational_gap_years_min) {
+          reasons.push("Educational gap too short");
+        }
+
+        if (e.class_standing && student.class_standing && !e.class_standing.includes(student.class_standing)) {
+          reasons.push("Class standing mismatch");
+        }
+
+        const req = new Set(e.required_flags || []);
+        if (req.has("FAFSA") && !student.fafsa_filed) missing.push("FAFSA");
+        if (req.has("PTK_MEMBER") && !student.ptk_member) missing.push("PTK_MEMBER");
+        if (req.has("KEY_CLUB") && !student.key_club_member) missing.push("KEY_CLUB");
+        if (req.has("NOT_FULLY_ONLINE") && student.fully_online) reasons.push("Program excludes fully online");
+        if (req.has("LIVE_ON_CAMPUS") && !student.plans_live_on_campus) missing.push("LIVE_ON_CAMPUS");
+
+        let status = "ELIGIBLE";
+        if (reasons.length) status = "INELIGIBLE";
+        else if (missing.length || !s.automatic) status = "CONDITIONAL";
+
+        results.push({
+          scholarship: s,
+          status,
+          reasons: (!reasons.length && !missing.length && !s.automatic) ? ["Competitive/programmatic review"] : [...reasons, ...(missing.length ? ["Missing: " + missing.join(", ")] : [])],
+          missing_fields: missing,
+          estimated_amount: { value: s.amount.value ?? null, notes: s.amount.notes ?? undefined }
+        });
+      }
+      return results;
+    }
+
+    // --------- UI glue ---------
+    const $ = (id) => document.getElementById(id);
+    const fields = ["state","residency_state","citizenship","age","income","hhsize","gpa","act","sat","class_standing","fafsa","appdate","ptk","keyclub","fully_online","live_on_campus","inst_filter","need_only","auto_only"];
+
+    function currentStudent() {
+      return {
+        state: $("state").value,
+        residency_state: $("residency_state").value,
+        citizenship: $("citizenship").value,
+        age: Number($("age").value || 0),
+        household_income: Number($("income").value || 0),
+        household_size: Number($("hhsize").value || 1),
+        gpa: Number($("gpa").value || 0),
+        act: $("act").value === "" ? undefined : Number($("act").value),
+        sat: $("sat").value === "" ? undefined : Number($("sat").value),
+        class_standing: $("class_standing").value,
+        fafsa_filed: $("fafsa").value === "yes",
+        application_date: $("appdate").value || undefined,
+        ptk_member: $("ptk").value === "yes",
+        key_club_member: $("keyclub").value === "yes",
+        fully_online: $("fully_online").value === "yes",
+        plans_live_on_campus: $("live_on_campus").value === "yes"
+      };
+    }
+
+    function filteredCatalog() {
+      let list = SCHOLARSHIPS_MS.slice();
+      const needOnly = $("need_only").value === "yes";
+      const autoOnly = $("auto_only").value === "yes";
+      const inst = $("inst_filter").value.trim().toLowerCase();
+
+      if (needOnly) list = list.filter(s => s.need_based);
+      if (autoOnly) list = list.filter(s => s.automatic);
+      if (inst) list = list.filter(s => s.institution.toLowerCase().includes(inst));
+
+      return list;
+    }
+
+    function render() {
+      const cat = filteredCatalog();
+      const res = qualify(currentStudent(), cat);
+
+      $("count_catalog").textContent = cat.length;
+      $("count_results").textContent = res.length;
+
+      const resultsEl = $("results");
+      resultsEl.innerHTML = "";
+
+      res.forEach(r => {
+        const card = document.createElement("div");
+        card.className = "rounded-xl border bg-white p-4 md:p-5";
+
+        const top = document.createElement("div");
+        top.className = "flex flex-col md:flex-row md:items-start md:justify-between gap-2";
+
+        const left = document.createElement("div");
+        const h3 = document.createElement("h3");
+        h3.className = "text-lg md:text-xl font-semibold";
+        h3.textContent = r.scholarship.name;
+        const subtitle = document.createElement("p");
+        subtitle.className = "text-sm text-gray-600";
+        subtitle.textContent = `${r.scholarship.institution} • ${r.scholarship.need_based ? "Need-based/considers need" : "Merit/other"}`;
+        left.appendChild(h3); left.appendChild(subtitle);
+
+        const badge = document.createElement("span");
+        badge.className = `badge badge-${r.status}`;
+        badge.textContent = r.status;
+
+        top.appendChild(left); top.appendChild(badge);
+        card.appendChild(top);
+
+        const grid = document.createElement("div");
+        grid.className = "mt-3 grid grid-cols-1 md:grid-cols-3 gap-3 text-sm";
+
+        const amount = document.createElement("div");
+        amount.className = "rounded-lg bg-gray-50 p-3";
+        amount.innerHTML = `<div class="font-semibold">Amount</div>
+                            <div>${r.estimated_amount.value ? "$" + Number(r.estimated_amount.value).toLocaleString() : "Varies"}</div>
+                            ${r.estimated_amount.notes ? `<div class="text-gray-600 mt-1">${r.estimated_amount.notes}</div>` : ""}`;
+
+        const deadlines = document.createElement("div");
+        deadlines.className = "rounded-lg bg-gray-50 p-3";
+        deadlines.innerHTML = `<div class="font-semibold">Deadlines</div>
+                               <div>Priority: ${r.scholarship.deadlines?.priority_date ?? "—"}</div>
+                               <div>Final: ${r.scholarship.deadlines?.final_date ?? "—"}</div>`;
+
+        const source = document.createElement("div");
+        source.className = "rounded-lg bg-gray-50 p-3";
+        source.innerHTML = `<div class="font-semibold">Source</div>
+                            ${r.scholarship.source_url ? `<a class="underline text-blue-700 break-all" href="${r.scholarship.source_url}" target="_blank" rel="noreferrer">${r.scholarship.source_url}</a>` : "—"}`;
+
+        grid.appendChild(amount); grid.appendChild(deadlines); grid.appendChild(source);
+        card.appendChild(grid);
+
+        if (r.reasons && r.reasons.length) {
+          const reasons = document.createElement("div");
+          reasons.className = "mt-3 text-sm text-gray-700";
+          reasons.innerHTML = r.reasons.map(x => `<div class="flex items-start gap-2"><span>•</span><span>${x}</span></div>`).join("");
+          card.appendChild(reasons);
+        }
+
+        resultsEl.appendChild(card);
+      });
+
+      $("json_dump").textContent = JSON.stringify(res, null, 2);
+    }
+
+    // Download button
+    $("download_json").addEventListener("click", () => {
+      const res = qualify(currentStudent(), filteredCatalog());
+      const blob = new Blob([JSON.stringify({ state: $("state").value, results: res }, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "ms-aid-matches.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    });
+
+    // Hook up all fields
+    fields.forEach(id => {
+      const el = $(id);
+      if (!el) return;
+      el.addEventListener("input", render);
+      el.addEventListener("change", render);
+    });
+
+    // Set default date to today
+    (function seedDate(){
+      const today = new Date().toISOString().slice(0,10);
+      $("appdate").value = today;
+    })();
+
+    render();
+  </script>
+</body>
+</html>
